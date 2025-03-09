@@ -4,17 +4,26 @@
 struct month {
     char *name;
     int n_days;
-    void (*print)(int);
+    void (*print)(char *, int);
 };
 
 
 typedef struct month Month;
-const char *names[] = {"Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dez"};
-const int n_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+char *names[] = {"Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dez"};
+int n_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 
-void print_month(int n_days) {
-    printf("\n%d\n", n_days);
+void print_month(char* name, int n_days) {
+    printf("%s", name);
+    for(int i=0; i < n_days; i++) {
+        if(i %7 == 0)
+            printf("%s", "\n");
+        if(i < 9)
+            printf("%d  ", i+1);
+        else
+            printf("%d ", i+1);
+    }
+    printf("%s", "\n");
 }
 
 void init_calender(Month cal[]) {
@@ -25,39 +34,29 @@ void init_calender(Month cal[]) {
 }
 
 void print(Month cal[], int month) {
-    cal[month].print(cal[month].n_days);
+    cal[month].print(cal[month].name, cal[month].n_days);
 }
 
 
 
 void main(void) {
-    const Month calender[12];
+    Month calender[12];
     init_calender(calender);
     
     int val;
     for(;;) {
         printf("%s\n", "Enter a month: 1 to 12 or 0 to quit");
-        scanf("%d", &val);
-
-        switch (val)
-        {
-            case 0:
-                goto end;
-            case 1:
-                print(calender, val-1);
-                break;
-            case 2:
-                print(calender, val-1);
-                break;
-            case 3:
-                print(calender, val-1);
-                break;
-            case 4:
-                print(calender, val-1);
-                break;
-            default:
-                printf("Something went wrong. Check you input next time. Range: 1-12\n");
-        }
+        scanf("\n%d", &val);
+        while(getchar() != '\n'); 
+        
+        if(val < 1 || val > 12) {
+            printf("%s", "Error, check your input!!!");
+        } else {
+            print(calender, val-1);
+       }
     }
 end:
 }
+
+
+
