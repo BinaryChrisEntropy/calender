@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <stdbool.h>
 
 struct month {
     char *name;
@@ -13,10 +15,15 @@ char *names[] = {"Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "
 int n_days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 
+bool is_leap(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+
 void print_month(char* name, int n_days) {
     printf("%s", name);
     for(int i=0; i < n_days; i++) {
-        if(i %7 == 0)
+        if(i % 7 == 0)
             printf("%s", "\n");
         if(i < 9)
             printf("%d  ", i+1);
@@ -26,6 +33,8 @@ void print_month(char* name, int n_days) {
     printf("%s", "\n");
 }
 
+
+
 void init_calender(Month cal[]) {
     for(int i=0; i < 12; i++) {
         Month m = {.name = names[i] + '\0', .n_days = n_days[i], .print = print_month};
@@ -33,13 +42,22 @@ void init_calender(Month cal[]) {
     }
 }
 
-void print(Month cal[], int month) {
+void print(Month cal[], int month, int year) {
+    if(is_leap(year) && month == 1)
+        cal[month].n_days = 29;
+    else if(!is_leap(year) && month == 1)
+        cal[month].n_days = 28;
+
     cal[month].print(cal[month].name, cal[month].n_days);
 }
 
 
 
 void main(void) {
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    int year = tm->tm_year + 1900;
+
     Month calender[12];
     init_calender(calender);
     
@@ -52,7 +70,7 @@ void main(void) {
         if(val < 1 || val > 12) {
             printf("%s", "Error, check your input!!!");
         } else {
-            print(calender, val-1);
+            print(calender, val-1, year);
        }
     }
 end:
